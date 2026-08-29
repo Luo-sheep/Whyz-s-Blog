@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { CATEGORIES } from "../data/site";
+import { formatDate, readingTime } from "../utils/posts";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+const { post } = Astro.props;
+const category = CATEGORIES[post.data.category];
+---
+
+<article class="post-card paper">
+  <div class="post-card-top">
+    <a class="eyebrow" href={`/categories/${post.data.category}`}>{category.label}</a>
+    <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>
+  </div>
+  <h2><a href={`/posts/${post.id}`}>{post.data.title}</a></h2>
+  <p>{post.data.description}</p>
+  <div class="post-card-bottom">
+    <div class="tag-list">
+      {post.data.tags.slice(0, 3).map((tag) => <a href={`/tags/${encodeURIComponent(tag)}`}>#{tag}</a>)}
+    </div>
+    <span>{readingTime(post.body)} min</span>
+  </div>
+</article>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  title?: string;
+  message?: string;
+}
+const {
+  title = "这一页还在等待第一行字",
+  message = "真实的记录值得慢慢积累。下一篇文章，也许正在路上。",
+} = Astro.props;
+---
+
+<div class="empty-state paper">
+  <span aria-hidden="true">✎</span>
+  <h2>{title}</h2>
+  <p>{message}</p>
+</div>

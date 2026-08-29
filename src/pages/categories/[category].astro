@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { CATEGORIES, type CategoryKey } from "../../data/site";
+import { visiblePosts } from "../../utils/posts";
+
+export const getStaticPaths = (() =>
+  Object.keys(CATEGORIES).map((category) => ({
+    params: { category },
+    props: { category: category as CategoryKey },
+  }))) satisfies GetStaticPaths;
+
+const { category } = Astro.props as { category: CategoryKey };
+const meta = CATEGORIES[category];
+const posts = visiblePosts(await getCollection("posts")).filter(
+  (post) => post.data.category === category,
+);
+---
+
+<BaseLayout title={meta.label} description={meta.description}>
+  <section class="shell page-hero">
+    <p class="eyebrow">{meta.english}</p>
+    <h1>{meta.label}</h1>
+    <p>{meta.description}</p>
+  </section>
+  <section class="shell section page-content">
+    {posts.length ? (
+      <div class="post-list">{posts.map((post) => <PostCard post={post} />)}</div>
+    ) : (
+      <EmptyState title={`${meta.label}的第一页还是空白`} />
+    )}
+  </section>
+</BaseLayout>

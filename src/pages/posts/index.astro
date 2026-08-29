@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { visiblePosts } from "../../utils/posts";
+
+const posts = visiblePosts(await getCollection("posts"));
+---
+
+<BaseLayout title="全部文章" description="Whyz 的编程、阅读、项目与生活记录。">
+  <section class="shell page-hero">
+    <p class="eyebrow">ALL STORIES</p>
+    <h1>全部文章</h1>
+    <p>把理解写下来，也把成长留下来。</p>
+  </section>
+  <section class="shell section page-content">
+    {posts.length ? (
+      <div class="post-list">{posts.map((post) => <PostCard post={post} />)}</div>
+    ) : (
+      <EmptyState />
+    )}
+  </section>
+</BaseLayout>

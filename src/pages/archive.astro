@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CATEGORIES } from "../data/site";
+import { formatDate, visiblePosts } from "../utils/posts";
+
+const posts = visiblePosts(await getCollection("posts"));
+const groups = Object.groupBy(posts, (post) =>
+  String(post.data.publishDate.getFullYear()),
+);
+const years = Object.keys(groups).sort((a, b) => Number(b) - Number(a));
+---
+
+<BaseLayout title="文章归档" description="沿着时间，查看 Whyz 写下的全部记录。">
+  <section class="shell page-hero">
+    <p class="eyebrow">ARCHIVE</p>
+    <h1>沿着时间翻一翻</h1>
+    <p>有些进步很小，放进时间里，就能看见它们的形状。</p>
+  </section>
+  <section class="shell section page-content archive">
+    {years.map((year) => (
+      <section class="archive-year">
+        <div class="year-stamp">{year}</div>
+        <div class="archive-items">
+          {groups[year]?.map((post) => (
+            <article class="archive-item paper">
+              <time datetime={post.data.publishDate.toISOString()}>
+                {formatDate(post.data.publishDate)}
+              </time>
+              <div>
+                <a href={`/posts/${post.id}`}>{post.data.title}</a>
+                <span>{CATEGORIES[post.data.category].label}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </section>
+</BaseLayout>
