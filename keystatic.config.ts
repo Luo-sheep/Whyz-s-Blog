@@ -1,10 +1,12 @@
 import { collection, config, fields } from "@keystatic/core";
 
-const isVercel = process.env.VERCEL === "1";
+// Vite 会在构建时把这个值替换成 true/false，因此浏览器端也能正确
+// 区分本地开发和线上生产环境。不要在这份客户端配置里读取 process.env。
+const isProduction = import.meta.env.PROD;
 
 export default config({
-  storage: isVercel ? { kind: "cloud" } : { kind: "local" },
-  ...(isVercel
+  storage: isProduction ? { kind: "cloud" } : { kind: "local" },
+  ...(isProduction
     ? { cloud: { project: "wicy-blog/whyz-s-blog" } }
     : {}),
   ui: {
